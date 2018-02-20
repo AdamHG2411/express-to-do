@@ -1,4 +1,4 @@
-const Todo = require("./schema");
+const Todo = require("../models/Todo");
 const seedData = require("./seeds.json");
 
 Todo.remove({})
