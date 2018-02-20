@@ -3,6 +3,8 @@ const parser = require('body-parser');
 const methodOverride = require('method-override');
 const hbs = require('hbs');
 
+const Todo = require('./db/schema')
+
 const app = express();
 
 app.set('view engine', 'hbs');
@@ -29,7 +31,11 @@ let todos = [
 
 // get all to dos
 app.get('/', (req, res) => {
-  res.render('index', { todos });
+  Todo.find({})
+    .then(todos => {
+      res.render('index', { todos });
+    })
+    .catch(err => console.log(err))
 });
 
 app.get('/new', (req, res) => {
@@ -38,46 +44,44 @@ app.get('/new', (req, res) => {
 
 // create a new to do
 app.post('/', (req, res) => {
-  todos.push({
-    id: todos.length,
-    title: req.body.title,
-    complete: false
-  });
-
-  res.redirect('/');
+  Todo.create(req.body)
+    .then(todo => {
+      res.redirect('/');
+    })
 });
 
 // get a specific to do
 app.get('/:id', (req, res) => {
-  let todo = todos.filter(todo => todo.id === req.params.id);
-  res.render('todos/show', todo);
+  Todo.findOne({ _id: req.params.id })
+    .then(todo => {
+      res.render('todos/show', todo);
+    })
+    .catch(err => console.log(err))
 });
 
 // edit a specific to do
 app.get('/edit/:id', (req, res) => {
-  let todo = todos.find(todo => todo.id === parseInt(req.params.id));
-  res.render('todos/edit', todo);
+  Todo.findOne({_id: req.params.id})
+    .then(todo => {
+      console.log(todo)
+      res.render("todos/edit", todo);
+    })
 });
 
 // update a specific to do
 app.put('/:id', (req, res) => {
-  todos = todos.map(todo => {
-    if (todo.id === parseInt(req.params.id)) {
-      todo.complete = req.body.complete;
-      todo.title = req.body.title;
-    }
-
-    return todo;
-  });
-
-  res.redirect('/');
+  Todo.findOneAndUpdate({_id: req.params.id}, req.body, { new: true })
+    .then(todo => {
+      res.redirect('/')
+    })
 });
 
 // delete a specific to do
 app.delete('/:id', (req, res) => {
-  todos = todos.filter(todo => !(todo.id === parseInt(req.params.id)))
-
-  res.redirect('/')
+  Todo.findOneAndRemove({ _id: req.params.id })
+    .then(() => {
+      res.redirect('/')
+    })
 });
 
 app.listen(3000, () => console.log('server is running!'));
