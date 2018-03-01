@@ -13,6 +13,4 @@ app.use(methodOverride('_method'));
 
 app.use('/', todosController)
 
-app.set('port', process.env.PORT || 3000)
-
-app.listen(app.get('port'), () => console.log(`server is running on ${app.get('port')}!`));
+app.listen(3000, () => console.log('server is running!'));
