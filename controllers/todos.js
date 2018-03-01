@@ -40,6 +40,8 @@ r.get("/edit/:id", (req, res) => {
 
 // update a specific to do
 r.put("/:id", (req, res) => {
+  console.log(req.body)
+  req.body.complete = req.body.complete ? true : false
   Todo.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }).then(
     todo => {
       res.redirect("/");
