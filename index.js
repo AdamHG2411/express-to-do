@@ -13,4 +13,4 @@ app.use(methodOverride('_method'));
 
 app.use('/', todosController)
 
-app.listen(3000, () => console.log('server is running!'));
+app.listen(3000, () => console.log('server is running on 3000!'));
